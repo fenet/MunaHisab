@@ -116,9 +116,23 @@ ActiveAdmin.register_page "Dashboard" do
                   after_tax = (total_sale_with_tax - tax).abs
                   total_sale = total_sale_with_out_tax + after_tax
                   expense = Expense.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).map{|e| e.price}.sum
+                  unit_price = Sale.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).map {|e| e.products.map { |f| f.unit_price}.sum}.sum
+                  quantity = Sale.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).map {|e|  e.product_items.map { |f| f.quantity}.sum}.sum
+                  net_price = quantity * unit_price
 
-                  profit = total_sale - expense
+                  profit = (total_sale - net_price) - expense
                   status_tag number_to_currency( profit, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2), class: "normal"
+
+                  #attributes_table_for Product do
+                  #  product = Sale.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day)
+                  #  quantity = product.quantity
+                  #  unit_price = product.unit_price
+                  #  net_price = quantity * unit_price
+
+                  #  profit = (total_sale - net_price) - expense
+                  #  status_tag number_to_currency( profit, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2), class: "normal"
+                  #end
+
                 end
               end
             end
@@ -180,12 +194,12 @@ ActiveAdmin.register_page "Dashboard" do
                 end
                 row "Sold Product" do |pro|
                   sold_product = ProductItem.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).map{|e| e.selling_price * e.quantity}.sum
-                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)'
+                end
                 row "Total Stock" do |pro|
                   total_product = pro.all.map{|e| e.quantity * e.unit_price}.sum
-                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)'
+                end
               end
             end
           end
@@ -268,7 +282,7 @@ ActiveAdmin.register_page "Dashboard" do
                     if !sale.product_ids.nil?
                       sale.products.map { |e| e.product_name }.join(", ")
                     end
-                  end 
+                  end
                   column "Total Products" do |s|
                     s.products.count
                   end
@@ -401,8 +415,9 @@ ActiveAdmin.register_page "Dashboard" do
                   after_tax = (total_sale_with_tax - tax).abs
                   total_sale = total_sale_with_out_tax + after_tax
                   expense = Expense.where('created_at >= ?', 1.week.ago).map{|e| e.price}.sum
+                  net_price = Product.where(created_at: 1.week.ago).map{|e| e.unit_price * e.quantity}.sum
 
-                  profit = total_sale - expense
+                  profit = (total_sale - net_price) - expense
                   status_tag number_to_currency( profit, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2), class: "normal"
                 end
               end
@@ -413,7 +428,7 @@ ActiveAdmin.register_page "Dashboard" do
           column do
             panel "Weekly Sales Report Graph" do
               product = ProductItem.where("created_at >= ?", 1.week.ago)
-              
+
               column_chart product.group_by_day_of_week(:created_at, format: "%a").count, download: {filename: "#{Time.now.strftime("%b %d, %Y")}, Weekly Sales Report Graph"}, xtitle: "Time", ytitle: "Product Sold", defer: true ,thousands: ",", messages: {empty: "There Is No Data"}
             end
           end
@@ -466,12 +481,12 @@ ActiveAdmin.register_page "Dashboard" do
                 end
                 row "Sold Product" do |pro|
                   sold_product = ProductItem.where('created_at >= ?', 1.week.ago).map{|e| e.selling_price * e.quantity}.sum
-                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)'
+                end
                 row "Total Stock" do |pro|
                   total_product = pro.all.map{|e| e.quantity * e.unit_price}.sum
-                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)'
+                end
               end
             end
           end
@@ -480,7 +495,7 @@ ActiveAdmin.register_page "Dashboard" do
           column do
             panel "Weekly Stock Report Graph" do
               product =Product.where("created_at >= ?", 1.week.ago)
-              
+
               column_chart product.group_by_day_of_week(:created_at, format: "%a").count, download: {filename: "#{Time.now.strftime("%b %d, %Y")}, Weekly Stock Report Graph"}, xtitle: "Time", ytitle: "Added Product", defer: true ,thousands: ",", messages: {empty: "There Is No Data"}
             end
           end
@@ -555,7 +570,7 @@ ActiveAdmin.register_page "Dashboard" do
                     if !sale.product_ids.nil?
                       sale.products.map { |e| e.product_name }.join(", ")
                     end
-                  end 
+                  end
                   column "Total Products" do |s|
                     s.products.count
                   end
@@ -687,8 +702,9 @@ ActiveAdmin.register_page "Dashboard" do
                   after_tax = (total_sale_with_tax - tax).abs
                   total_sale = total_sale_with_out_tax + after_tax
                   expense = Expense.where('created_at >= ?', 1.month.ago).map{|e| e.price}.sum
+                  net_price = Product.where(created_at: 1.month.ago).map{|e| e.unit_price * e.quantity}.sum
 
-                  profit = total_sale - expense
+                  profit = (total_sale - net_price) - expense
                   status_tag number_to_currency( profit, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2), class: "normal"
                 end
               end
@@ -699,7 +715,7 @@ ActiveAdmin.register_page "Dashboard" do
           column do
             panel "Monthly Sales Report Graph" do
               product = ProductItem.where("created_at >= ?", 1.month.ago)
-          
+
               line_chart product.group_by_day(:created_at, format: "%d").count, download: {filename: "#{Time.now.strftime("%b %d, %Y")}, Monthly Sales Report Graph"}, xtitle: "Days", ytitle: "Product Sold", defer: true ,thousands: ",", messages: {empty: "There Is No Data"}
             end
           end
@@ -752,12 +768,12 @@ ActiveAdmin.register_page "Dashboard" do
                 end
                 row "Sold Product" do |pro|
                   sold_product = ProductItem.where('created_at >= ?', 1.month.ago).map{|e| e.selling_price * e.quantity}.sum
-                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)'
+                end
                 row "Total Stock" do |pro|
                   total_product = pro.all.map{|e| e.quantity * e.unit_price}.sum
-                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)' 
-                end 
+                  status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)'
+                end
               end
             end
           end
@@ -840,7 +856,7 @@ ActiveAdmin.register_page "Dashboard" do
                     if !sale.product_ids.nil?
                       sale.products.map { |e| e.product_name }.join(", ")
                     end
-                  end 
+                  end
                   column "Total Products" do |s|
                     s.products.count
                   end
@@ -973,8 +989,9 @@ ActiveAdmin.register_page "Dashboard" do
                   after_tax = (total_sale_with_tax - tax).abs
                   total_sale = total_sale_with_out_tax + after_tax
                   expense = Expense.where('created_at >= ?', 1.year.ago).map{|e| e.price}.sum
+                  net_price = Product.where(created_at: 1.year.ago).map{|e| e.unit_price * e.quantity}.sum
 
-                  profit = total_sale - expense
+                  profit = (total_sale - net_price) - expense
                   status_tag number_to_currency( profit, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2), class: "normal"
                 end
               end
@@ -1037,12 +1054,12 @@ ActiveAdmin.register_page "Dashboard" do
               end
               row "Sold Product" do |pro|
                 sold_product = ProductItem.where('created_at >= ?', 1.year.ago).map{|e| e.selling_price * e.quantity}.sum
-                status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)' 
-              end 
+                status_tag number_to_currency( sold_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Selling Price X Quantity)'
+              end
               row "Total Stock" do |pro|
                 total_product = pro.all.map{|e| e.quantity * e.unit_price}.sum
-                status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)' 
-              end 
+                status_tag number_to_currency( total_product, unit: "ETB",  format: "%n %u" ,delimiter: "", precision: 2),class: "total_sale" ,title: '(Unit Price X Quantity)'
+              end
             end
           end
         end
@@ -1126,7 +1143,7 @@ ActiveAdmin.register_page "Dashboard" do
                     if !sale.product_ids.nil?
                       sale.products.map { |e| e.product_name }.join(", ")
                     end
-                  end 
+                  end
                   column "Total Products" do |s|
                     s.products.count
                   end
@@ -1151,5 +1168,5 @@ ActiveAdmin.register_page "Dashboard" do
 
     end
 
-  end 
+  end
 end
