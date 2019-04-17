@@ -67,11 +67,11 @@ permit_params :customer_name ,:phone_number ,:address ,:include_tax , :created_b
       end
 
 	    def decrement_inventory_quantity
-        @sale.products.each do |product|
-	     		product.product_items.each do |item|
-  		     	quantity = product.quantity - item.quantity
-  		     	product.update_columns(quantity: quantity)
-	     		end
+        @sale.product_items.each do |item|
+	     		#item.product.each do |product|
+  		     	quantity = item.product.quantity - item.quantity
+  		      item.product.update_columns(quantity: quantity)
+	     		#end
 	     	end
 	    end
 
