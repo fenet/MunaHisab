@@ -140,7 +140,7 @@ permit_params :customer_name ,:phone_number ,:address ,:include_tax , :created_b
     end
     f.has_many :product_items,remote: true , allow_destroy: true, new_record: true do |a|
       	a.input :product_id, as: :search_select, url: admin_products_path,
-          fields: [:product_name, :serial_number], display_name: 'serial_number', minimum_input_length: 3,
+          fields: [:product_name, :serial_number], display_name: 'product_name', minimum_input_length: 3,
           order_by: 'id_asc'
 
 	      a.input :selling_price, :required => true
