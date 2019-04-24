@@ -50,7 +50,8 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
-          column do
+          if current_admin_user.role == "Owner"
+           column do
             panel "Daily Sales Report" do
               attributes_table_for Sale do
                 row "Gross Sales" do |d|
@@ -135,6 +136,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
           column do
             panel "7 days Sales Report Graph" do
@@ -149,6 +151,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+        if current_admin_user.role == "Owner"
         columns do
           column do
             panel "Stock Report" do
@@ -209,7 +212,9 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
+          if current_admin_user.role == "Owner"
           column do
             panel "Recent Added Users" do
               if !(AdminUser.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).count == 0)
@@ -223,6 +228,7 @@ ActiveAdmin.register_page "Dashboard" do
                 h3 class: "text-center" do
                   "NO NEW USER ADDED TODAY"
                 end
+              end
                   # actions defaults: true do |foo|
 
                   #   link_to "Add New User", new_admin_admin_user_path(foo)
@@ -250,6 +256,7 @@ ActiveAdmin.register_page "Dashboard" do
           end
         end
         columns do
+        if current_admin_user.role == "Owner"
           column do
             panel "Recent Added To Stock" do
               if !(Product.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).count == 0)
@@ -271,6 +278,7 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+        end
           column do
             panel "Recent Sold To Products" do
               if !(Sale.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).count == 0)
@@ -346,8 +354,10 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
-          column do
-            panel "Weekly Sales Report" do
+
+         if current_admin_user.role == "Owner"
+           column do
+              panel "Weekly Sales Report" do
               attributes_table_for Sale do
                 row "Gross Sales" do |d|
                   total_sale = d.where('created_at >= ?', 1.week.ago).map{|e| e.total_price}.sum
@@ -421,6 +431,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
           column do
             panel "Weekly Sales Report Graph" do
@@ -436,6 +447,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      if current_admin_user.role == "Owner"
         columns do
           column do
             panel "Stock Report" do
@@ -497,7 +509,9 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
+          if current_admin_user.role == "Owner"
           column do
             panel "Recent Added Users" do
               if !(AdminUser.where('created_at >= ?', 1.week.ago).count == 0)
@@ -511,6 +525,7 @@ ActiveAdmin.register_page "Dashboard" do
                 h3 class: "text-center" do
                   "NO NEW USER ADDED TODAY"
                 end
+              end
                 # actions defaults: true do |foo|
 
                 #   link_to "Add New User", new_admin_admin_user_path(foo)
@@ -538,6 +553,7 @@ ActiveAdmin.register_page "Dashboard" do
           end
         end
         columns do
+         if current_admin_user.role == "Owner"
           column do
             panel "Recent Added To Stock" do
               if !(Product.where('created_at >= ?', 1.week.ago).count == 0)
@@ -559,6 +575,7 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+        end
           column do
             panel "Recent Sold To Products" do
               if !(Sale.where('created_at >= ?', 1.week.ago).count == 0)
@@ -633,6 +650,8 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+
+        if current_admin_user.role == "Owner"
           column do
             panel "Monthly Sales Report" do
               attributes_table_for Sale do
@@ -707,6 +726,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
           column do
             panel "Monthly Sales Report Graph" do
@@ -722,6 +742,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+        if current_admin_user.role == "Owner"
         columns do
           column do
             panel "Stock Report" do
@@ -782,7 +803,9 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
+          if current_admin_user.role == "Owner"
           column do
             panel "Recent Added Users" do
               if !(AdminUser.where('created_at >= ?', 1.month.ago).count == 0)
@@ -796,6 +819,7 @@ ActiveAdmin.register_page "Dashboard" do
                 h3 class: "text-center" do
                   "NO NEW USER ADDED TODAY"
                 end
+              end
                 # actions defaults: true do |foo|
 
                 #   link_to "Add New User", new_admin_admin_user_path(foo)
@@ -823,6 +847,7 @@ ActiveAdmin.register_page "Dashboard" do
           end
         end
         columns do
+          if current_admin_user.role == "Owner"
           column do
             panel "Recent Added To Stock" do
               if !(Product.where('created_at >= ?', 1.month.ago).count == 0)
@@ -844,6 +869,7 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+        end
           column do
             panel "Recent Sold To Products" do
               if !(Sale.where('created_at >= ?', 1.month.ago).count == 0)
@@ -919,6 +945,7 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+      if current_admin_user.role == "Owner"
           column do
             panel "Yearly Sales Report" do
               attributes_table_for Sale do
@@ -994,6 +1021,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
           column do
             panel "Yearly Sales Report Graph" do
@@ -1008,6 +1036,7 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+        if current_admin_user.role == "Owner"
         columns do
           column do
             panel "Stock Report" do
@@ -1069,7 +1098,9 @@ ActiveAdmin.register_page "Dashboard" do
             end
           end
         end
+      end
         columns do
+         if current_admin_user.role == "Owner"
           column do
             panel "Recent Added Users" do
               if !(AdminUser.where('created_at >= ?', 1.year.ago).count == 0)
@@ -1083,6 +1114,7 @@ ActiveAdmin.register_page "Dashboard" do
                 h3 class: "text-center" do
                   "NO NEW USER ADDED TODAY"
                 end
+              end
                 # actions defaults: true do |foo|
 
                 #   link_to "Add New User", new_admin_admin_user_path(foo)
@@ -1110,6 +1142,7 @@ ActiveAdmin.register_page "Dashboard" do
           end
         end
         columns do
+          if current_admin_user.role == "Owner"
           column do
             panel "Recent Added To Stock" do
               if !(Product.where('created_at >= ?', 1.year.ago).count == 0)
@@ -1131,6 +1164,7 @@ ActiveAdmin.register_page "Dashboard" do
               end
             end
           end
+        end  
           column do
             panel "Recent Sold To Products" do
               if !(Sale.where('created_at >= ?', 1.year.ago).count == 0)

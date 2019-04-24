@@ -17,6 +17,7 @@ ActiveAdmin.register Catagory do
 
   index do
     selectable_column
+    column :id
     column "Catagory Name", :name
     column "Products", sortable: true do |c|
     	status_tag c.products.count, class: "total_sale"
