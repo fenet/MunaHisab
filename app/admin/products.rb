@@ -1,4 +1,5 @@
 ActiveAdmin.register Product do
+  active_admin_importable
   menu label: "Stock"
 permit_params :product_name,:description,:unit_price,:quantity, :photo, :photo_cache,:serial_number,:selling_price,:type_of_sales, :catagory_id, :created_by, tags_attributes: [:id, :tag_name, :_destroy]
 

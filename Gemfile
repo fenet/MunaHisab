@@ -43,6 +43,7 @@ gem 'mini_magick', '~> 4.9', '>= 4.9.3'
 gem 'cloudinary', '~> 1.11', '>= 1.11.1'
 gem 'chartkick', '~> 3.0', '>= 3.0.2'
 gem 'groupdate'
+gem 'active_admin_importable', '~> 1.1', '>= 1.1.2'
 # gem 'active_admin_importable'
 # gem "selectize-rails"
 # gem 'activeadmin_selectize'
@@ -54,7 +55,7 @@ gem 'groupdate'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do
-  
+
   gem 'dotenv-rails', '~> 2.6'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
