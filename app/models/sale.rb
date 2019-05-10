@@ -7,8 +7,15 @@ class Sale < ApplicationRecord
   before_save :update_subtotal
 
 ## validation
-                     
+
     validates :total_price,  :presence => true
+
+		#validates :has_product_item
+
+    # def has_product_item
+		#   	 errors.add(:base, 'can not be null') if self.product_items.empty?
+	  # end
+		
 ## scope
 
     scope :recently_sold, lambda { where('created_at >= ?', 1.week.ago)}
@@ -21,10 +28,11 @@ class Sale < ApplicationRecord
     product_items.collect { |oi| oi.valid? ? (oi.quantity * oi.selling_price) : 0 }.sum
   end
 
-  
+
   private
 
   def update_subtotal
     self[:total_price] = total_price
   end
+
 end

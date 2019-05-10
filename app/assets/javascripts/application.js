@@ -17,9 +17,10 @@
 //= require MDBootstrap/js/bootstrap.js
 //= require flatpickr
 //= require cocoon
+//= require_tree
 
 $(document).on('turbolinks:load', function(){
-		
+
     $('.datepicker').flatpickr();
     $('.stepper').mdbStepper();
 

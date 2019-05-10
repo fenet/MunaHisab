@@ -51,7 +51,7 @@ gem 'active_admin_importable', '~> 1.1', '>= 1.1.2'
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
-
+#gem 'activeadmin-dry-validation', '~> 0.1.0'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do
